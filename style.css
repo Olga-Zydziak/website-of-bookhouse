@@ -39,7 +39,7 @@
   --shadow-elevated: 0 20px 45px rgba(6, 9, 19, 0.45);
   --transition-base: 200ms ease;
   --max-content-width: 72rem;
-  --layout-gutter: clamp(0.4rem, 1.5vw, 1.1rem);
+  --layout-gutter: clamp(0.1rem, 0.4vw, 0.4rem);
   --layout-gap: clamp(1.5rem, 3.25vw, 3rem);
   --layout-section-spacing: clamp(1.75rem, 4.5vw, 3.5rem);
   --layout-sidebar-width: clamp(14rem, 18vw, 20rem);
