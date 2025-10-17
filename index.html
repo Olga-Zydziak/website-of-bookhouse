@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Publishing Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page">
+  <header class="page__header site-header">
+    <div class="page__container site-header__inner">
+      <div class="site-header__branding">
+        <div class="site-header__logo" aria-label="Logo placeholder"></div>
+        <div class="site-header__hero"></div>
+      </div>
+      <nav class="site-header__tabs" aria-label="Primary">
+        <ul class="tabs" role="tablist">
+          <li class="tabs__item" role="presentation">
+            <button class="tabs__button tabs__button--active" role="tab" aria-selected="true" aria-controls="tab-panel" id="tab-publishing" data-tab="publishing">Publishing House</button>
+          </li>
+          <li class="tabs__item" role="presentation">
+            <button class="tabs__button" role="tab" aria-selected="false" aria-controls="tab-panel" id="tab-authors" data-tab="authors">For Authors</button>
+          </li>
+          <li class="tabs__item" role="presentation">
+            <button class="tabs__button" role="tab" aria-selected="false" aria-controls="tab-panel" id="tab-self" data-tab="selfPublishing">Self-publishing</button>
+          </li>
+          <li class="tabs__item" role="presentation">
+            <button class="tabs__button" role="tab" aria-selected="false" aria-controls="tab-panel" id="tab-bookstore" data-tab="bookstore">Bookstore</button>
+          </li>
+          <li class="tabs__item" role="presentation">
+            <button class="tabs__button" role="tab" aria-selected="false" aria-controls="tab-panel" id="tab-contact" data-tab="contact">Contact</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="page__main">
+    <div class="page__container layout">
+      <aside class="layout__aside categories" aria-label="Categories">
+        <h2 class="categories__title">Categories</h2>
+        <ul class="categories__list">
+          <li class="categories__item"><a class="categories__link" href="categories/literature.html">Literature</a></li>
+          <li class="categories__item"><a class="categories__link" href="categories/promotions.html">Promotions</a></li>
+          <li class="categories__item"><a class="categories__link" href="categories/training-tools.html">Training Tools</a></li>
+        </ul>
+      </aside>
+      <section class="layout__content panels">
+        <article class="panels__panel panels__panel--active" id="tab-panel" role="tabpanel" aria-labelledby="tab-publishing" aria-live="polite" tabindex="-1">
+          <h2 class="panels__title" id="tab-panel-title">Publishing House</h2>
+          <div class="panels__body" id="tab-panel-body"></div>
+        </article>
+      </section>
+    </div>
+  </main>
+  <footer class="page__footer site-footer">
+    <div class="page__container site-footer__inner">
+      <p class="site-footer__text">© <span id="current-year"></span> Publishing Portfolio. All rights reserved.</p>
+      <nav class="site-footer__social" aria-label="Social media">
+        <ul class="site-footer__social-list">
+          <li class="site-footer__social-item">
+            <a class="site-footer__social-link" href="https://www.facebook.com/yourpublishinghouse" target="_blank" rel="noreferrer noopener">Facebook</a>
+          </li>
+          <li class="site-footer__social-item">
+            <a class="site-footer__social-link" href="https://www.instagram.com/yourpublishinghouse" target="_blank" rel="noreferrer noopener">Instagram</a>
+          </li>
+          <li class="site-footer__social-item">
+            <a class="site-footer__social-link" href="https://www.linkedin.com/company/yourpublishinghouse" target="_blank" rel="noreferrer noopener">LinkedIn</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </footer>
+  <script src="scripts/tab-content.js"></script>
+  <script src="scripts/main.js"></script>
+</body>
+</html>

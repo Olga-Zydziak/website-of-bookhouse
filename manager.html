@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Content Manager | Publishing Portfolio</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="page">
+  <header class="page__header site-header">
+    <div class="page__container site-header__inner">
+      <div class="site-header__branding">
+        <div class="site-header__logo" aria-label="Logo placeholder"></div>
+        <div class="site-header__hero"></div>
+      </div>
+      <nav class="site-header__tabs" aria-label="Manager navigation">
+        <ul class="tabs" role="list">
+          <li class="tabs__item"><a class="tabs__button" href="index.html">← Back to site</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <main class="page__main">
+    <section class="content-manager" aria-labelledby="content-manager-title">
+      <div class="page__container content-manager__inner">
+        <header class="content-manager__header">
+          <div class="content-manager__intro">
+            <h1 class="content-manager__title" id="content-manager-title">Quick Content Manager</h1>
+            <p class="content-manager__description">Update tab titles, narrative copy, and contact details without touching the codebase. Changes are saved to this browser and reflected on the home page when reloaded.</p>
+          </div>
+          <p class="content-manager__notice" role="note">Separate paragraphs with a blank line. Start a line with “- ” to create bullet points. The palette controls live in the sidebar so you can see at a glance where content and styling updates occur.</p>
+        </header>
+        <div class="content-manager__layout">
+          <form class="content-manager__form" id="content-manager-form">
+            <div class="content-manager__field">
+              <label class="content-manager__label" for="manager-tab">Choose section</label>
+              <select class="content-manager__select" id="manager-tab" name="manager-tab">
+                <option value="publishing">Publishing House</option>
+                <option value="authors">For Authors</option>
+                <option value="selfPublishing">Self-publishing</option>
+                <option value="bookstore">Bookstore</option>
+                <option value="contact">Contact</option>
+              </select>
+            </div>
+            <div class="content-manager__field">
+              <label class="content-manager__label" for="manager-title">Tab title</label>
+              <input class="content-manager__input" id="manager-title" name="manager-title" type="text" required />
+            </div>
+            <div class="content-manager__field content-manager__field--wide">
+              <label class="content-manager__label" for="manager-body">Tab content</label>
+              <textarea class="content-manager__textarea" id="manager-body" name="manager-body" rows="10" required></textarea>
+              <p class="content-manager__hint">Example bullet list:<br />- First highlight<br />- Second highlight</p>
+            </div>
+            <fieldset class="content-manager__fieldset" data-manager-contact hidden>
+              <legend class="content-manager__legend">Contact details</legend>
+              <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-phone">Phone number</label>
+                <input class="content-manager__input" id="manager-phone" name="manager-phone" type="tel" placeholder="+48 123 456 789" />
+              </div>
+              <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-email">Contact email</label>
+                <input class="content-manager__input" id="manager-email" name="manager-email" type="email" placeholder="kontakt@twojwydawnictwo.pl" />
+                <p class="content-manager__hint">This address appears in the Contact tab and receives form submissions.</p>
+              </div>
+              <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-subject">Notification subject</label>
+                <input class="content-manager__input" id="manager-subject" name="manager-subject" type="text" placeholder="New inquiry from the website" />
+              </div>
+              <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-submitting">Submitting message</label>
+                <input class="content-manager__input" id="manager-submitting" name="manager-submitting" type="text" placeholder="Sending your message…" />
+              </div>
+              <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-success">Success message</label>
+                <input class="content-manager__input" id="manager-success" name="manager-success" type="text" placeholder="Thank you! We will reply shortly." />
+              </div>
+              <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-error">Error message</label>
+                <input class="content-manager__input" id="manager-error" name="manager-error" type="text" placeholder="Sorry, something went wrong." />
+              </div>
+            </fieldset>
+            <div class="content-manager__actions">
+              <button class="content-manager__button" type="submit">Update preview</button>
+              <button class="content-manager__button content-manager__button--ghost" type="button" id="manager-reset">Reset form</button>
+              <button class="content-manager__button content-manager__button--danger" type="button" id="manager-clear">Clear saved changes</button>
+            </div>
+            <p class="content-manager__status" id="manager-status" role="status" aria-live="polite"></p>
+          </form>
+          <aside class="content-manager__sidebar" aria-label="Visual theme controls">
+            <section class="content-manager__panel" data-manager-theme>
+              <h2 class="content-manager__panel-title">Brand colors</h2>
+              <p class="content-manager__hint">Adjust the primary palette. Changes apply instantly in this preview and can be exported for your production site.</p>
+              <div class="content-manager__field content-manager__field--color">
+                <label class="content-manager__label" for="manager-color-background">Background</label>
+                <div class="content-manager__color-controls">
+                  <input class="content-manager__color-swatch" id="manager-color-background-swatch" type="color" data-theme-picker="--color-background" aria-label="Choose background color" />
+                  <input class="content-manager__input content-manager__input--color" id="manager-color-background" name="manager-color-background" type="text" data-theme-token="--color-background" placeholder="#0f1117" />
+                </div>
+              </div>
+              <div class="content-manager__field content-manager__field--color">
+                <label class="content-manager__label" for="manager-color-surface">Primary surface</label>
+                <div class="content-manager__color-controls">
+                  <input class="content-manager__color-swatch" id="manager-color-surface-swatch" type="color" data-theme-picker="--color-surface" aria-label="Choose primary surface color" />
+                  <input class="content-manager__input content-manager__input--color" id="manager-color-surface" name="manager-color-surface" type="text" data-theme-token="--color-surface" placeholder="#161922" />
+                </div>
+              </div>
+              <div class="content-manager__field content-manager__field--color">
+                <label class="content-manager__label" for="manager-color-surface-alt">Surface accent</label>
+                <div class="content-manager__color-controls">
+                  <input class="content-manager__color-swatch" id="manager-color-surface-alt-swatch" type="color" data-theme-picker="--color-surface-alt" aria-label="Choose secondary surface color" />
+                  <input class="content-manager__input content-manager__input--color" id="manager-color-surface-alt" name="manager-color-surface-alt" type="text" data-theme-token="--color-surface-alt" placeholder="#1f2431" />
+                </div>
+              </div>
+              <div class="content-manager__field content-manager__field--color">
+                <label class="content-manager__label" for="manager-color-accent">Accent</label>
+                <div class="content-manager__color-controls">
+                  <input class="content-manager__color-swatch" id="manager-color-accent-swatch" type="color" data-theme-picker="--color-accent" aria-label="Choose accent color" />
+                  <input class="content-manager__input content-manager__input--color" id="manager-color-accent" name="manager-color-accent" type="text" data-theme-token="--color-accent" placeholder="#5a8dee" />
+                </div>
+                <p class="content-manager__hint">Accent tints and hover states update automatically from this value.</p>
+              </div>
+              <div class="content-manager__field content-manager__field--color">
+                <label class="content-manager__label" for="manager-color-text-primary">Primary text</label>
+                <div class="content-manager__color-controls">
+                  <input class="content-manager__color-swatch" id="manager-color-text-primary-swatch" type="color" data-theme-picker="--color-text-primary" aria-label="Choose primary text color" />
+                  <input class="content-manager__input content-manager__input--color" id="manager-color-text-primary" name="manager-color-text-primary" type="text" data-theme-token="--color-text-primary" placeholder="#f5f7ff" />
+                </div>
+              </div>
+              <div class="content-manager__field content-manager__field--color">
+                <label class="content-manager__label" for="manager-color-text-secondary">Secondary text</label>
+                <div class="content-manager__color-controls">
+                  <input class="content-manager__color-swatch" id="manager-color-text-secondary-swatch" type="color" data-theme-picker="--color-text-secondary" aria-label="Choose secondary text color" />
+                  <input class="content-manager__input content-manager__input--color" id="manager-color-text-secondary" name="manager-color-text-secondary" type="text" data-theme-token="--color-text-secondary" placeholder="#b4bbd6" />
+                </div>
+              </div>
+              <div class="content-manager__actions content-manager__actions--theme">
+                <button class="content-manager__button content-manager__button--ghost" type="button" id="manager-theme-reset">Reset colors</button>
+              </div>
+            </section>
+            <section class="content-manager__panel content-manager__panel--shading">
+              <h2 class="content-manager__panel-title">Shading &amp; depth</h2>
+              <div class="content-manager__field content-manager__field--segmented">
+                <span class="content-manager__label" id="manager-shade-direction-label">Background shading origin</span>
+                <div class="content-manager__segmented" role="group" aria-labelledby="manager-shade-direction-label">
+                  <button
+                    class="content-manager__segmented-button content-manager__segmented-button--active"
+                    type="button"
+                    data-shade-direction="to bottom"
+                    aria-pressed="true"
+                  >
+                    From top
+                  </button>
+                  <button
+                    class="content-manager__segmented-button"
+                    type="button"
+                    data-shade-direction="to top"
+                    aria-pressed="false"
+                  >
+                    From bottom
+                  </button>
+                </div>
+              </div>
+              <div class="content-manager__field content-manager__field--range">
+                <label class="content-manager__label" for="manager-background-shade">Background shading strength</label>
+                <div class="content-manager__range">
+                  <input class="content-manager__range-input" id="manager-background-shade" type="range" min="0" max="60" step="1" value="18" />
+                  <output class="content-manager__range-value" id="manager-background-shade-value" for="manager-background-shade">18%</output>
+                </div>
+                <p class="content-manager__hint">Controls the gradient overlay behind the entire page background.</p>
+              </div>
+              <div class="content-manager__field content-manager__field--range">
+                <label class="content-manager__label" for="manager-accent-shade">Accent shading</label>
+                <div class="content-manager__range">
+                  <input class="content-manager__range-input" id="manager-accent-shade" type="range" min="5" max="60" step="1" value="12" data-theme-shade aria-describedby="manager-accent-shade-help" />
+                  <output class="content-manager__range-value" id="manager-accent-shade-value" for="manager-accent-shade">12%</output>
+                </div>
+                <p class="content-manager__hint" id="manager-accent-shade-help">Controls the transparency of accent highlights and hover states.</p>
+              </div>
+              <div class="content-manager__field content-manager__field--range">
+                <label class="content-manager__label" for="manager-shadow-depth">Card shadow</label>
+                <div class="content-manager__range">
+                  <input class="content-manager__range-input" id="manager-shadow-depth" type="range" min="0" max="70" step="1" value="45" data-theme-shadow aria-describedby="manager-shadow-depth-help" />
+                  <output class="content-manager__range-value" id="manager-shadow-depth-value" for="manager-shadow-depth">45%</output>
+                </div>
+                <p class="content-manager__hint" id="manager-shadow-depth-help">Set the perceived depth for cards and panels.</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+        <section class="content-manager__output" aria-live="polite" aria-label="Generated configuration">
+          <h2 class="content-manager__output-title">Generated configuration</h2>
+          <pre class="content-manager__output-code" id="manager-output"></pre>
+        </section>
+      </div>
+    </section>
+  </main>
+  <footer class="page__footer site-footer">
+    <div class="page__container site-footer__inner">
+      <p class="site-footer__text">Need help integrating these updates? Email <a class="site-footer__social-link" href="mailto:kontakt@twojwydawnictwo.pl">kontakt@twojwydawnictwo.pl</a></p>
+    </div>
+  </footer>
+  <script src="scripts/tab-content.js"></script>
+  <script src="scripts/manager.js"></script>
+</body>
+</html>
