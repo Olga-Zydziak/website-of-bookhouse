@@ -450,6 +450,28 @@
       }
     });
 
+  const sendUrlEncodedPayload = async (endpoint, payload) => {
+    const params = new URLSearchParams();
+    Object.entries(payload).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        params.append(key, value);
+      }
+    });
+
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      mode: 'cors',
+      referrerPolicy: 'no-referrer',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        Accept: 'application/json'
+      },
+      body: params.toString()
+    });
+
+    return parseFormSubmitResponse(response);
+  };
+
   const sendJsonPayload = async (endpoint, payload) => {
     const response = await fetch(endpoint, {
       method: 'POST',
@@ -731,25 +753,35 @@
 
         let result = null;
         let fallbackUsed = false;
+        let lastError = null;
 
-        try {
-          result = await sendJsonPayload(endpoint, requestPayload);
-        } catch (jsonError) {
-          console.warn('JSON submission failed, retrying with FormData.', jsonError);
+        const submissionAttempts = [
+          async () => sendUrlEncodedPayload(endpoint, requestPayload),
+          async () => sendJsonPayload(endpoint, requestPayload),
+          async () => sendFormDataPayload(endpoint, requestPayload)
+        ];
+
+        for (const attempt of submissionAttempts) {
           try {
-            result = await sendFormDataPayload(endpoint, requestPayload);
-          } catch (formError) {
-            console.warn('FormData submission failed, attempting vanilla transport.', formError);
-            const fallbackEndpoint = normaliseFallbackEndpoint(endpoint);
-            const fallbackResult = await submitViaVanillaTransport(fallbackEndpoint, requestPayload, {
-              subject: details.subject,
-              nextUrl: window.location.href
-            });
-            if (!fallbackResult) {
-              throw formError;
-            }
-            fallbackUsed = true;
+            result = await attempt();
+            lastError = null;
+            break;
+          } catch (attemptError) {
+            lastError = attemptError;
           }
+        }
+
+        if (!result) {
+          console.warn('FormSubmit direct submission failed, falling back to iframe transport.', lastError);
+          const fallbackEndpoint = normaliseFallbackEndpoint(endpoint);
+          const fallbackResult = await submitViaVanillaTransport(fallbackEndpoint, requestPayload, {
+            subject: details.subject,
+            nextUrl: window.location.href
+          });
+          if (!fallbackResult) {
+            throw lastError || new Error('Unable to deliver the form payload.');
+          }
+          fallbackUsed = true;
         }
 
         contactForm.reset();
