@@ -419,6 +419,64 @@
         appendField('_next', details.nextUrl || window.location.href);
       }
 
+      const attachments = Array.isArray(details.attachments)
+        ? details.attachments.filter((file) => file instanceof File)
+        : [];
+
+      if (attachments.length) {
+        if (typeof DataTransfer === 'undefined') {
+          console.warn('Attachments fallback transport is not supported in this browser.');
+        } else {
+          const attachmentInput = document.createElement('input');
+          attachmentInput.type = 'file';
+          attachmentInput.name = attachments.length === 1 ? 'attachment' : 'attachments[]';
+          attachmentInput.multiple = attachments.length > 1;
+          attachmentInput.style.position = 'absolute';
+          attachmentInput.style.left = '-9999px';
+          attachmentInput.style.width = '1px';
+          attachmentInput.style.height = '1px';
+          attachmentInput.setAttribute('aria-hidden', 'true');
+
+          const dataTransfer = new DataTransfer();
+          attachments.forEach((file) => {
+            try {
+              dataTransfer.items.add(file);
+            } catch (error) {
+              console.warn('Unable to append attachment to fallback transport.', error);
+            }
+          });
+
+          if (dataTransfer.files.length) {
+            attachmentInput.files = dataTransfer.files;
+            form.appendChild(attachmentInput);
+
+            if (attachments.length === 1) {
+              const supplementalInput = document.createElement('input');
+              supplementalInput.type = 'file';
+              supplementalInput.name = 'attachments[]';
+              supplementalInput.style.position = 'absolute';
+              supplementalInput.style.left = '-9999px';
+              supplementalInput.style.width = '1px';
+              supplementalInput.style.height = '1px';
+              supplementalInput.setAttribute('aria-hidden', 'true');
+
+              const supplementalTransfer = new DataTransfer();
+              try {
+                supplementalTransfer.items.add(attachments[0]);
+                supplementalInput.files = supplementalTransfer.files;
+                form.appendChild(supplementalInput);
+              } catch (error) {
+                console.warn('Unable to append supplemental attachment input.', error);
+              }
+            }
+          }
+        }
+      }
+
+      if (details.subject) {
+        appendField('_subject', details.subject);
+      }
+
       document.body.append(frame, form);
 
       const cleanup = () => {
@@ -487,12 +545,20 @@
     return parseFormSubmitResponse(response);
   };
 
-  const sendFormDataPayload = async (endpoint, payload) => {
+  const sendFormDataPayload = async (endpoint, payload, attachments = []) => {
     const formData = new FormData();
     Object.entries(payload).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         formData.append(key, value);
       }
+    });
+
+    attachments.forEach((file, index) => {
+      if (!(file instanceof File)) {
+        return;
+      }
+      const fieldName = attachments.length === 1 && index === 0 ? 'attachment' : 'attachments[]';
+      formData.append(fieldName, file, file.name);
     });
 
     const response = await fetch(endpoint, {
@@ -616,18 +682,20 @@
     contactForm.className = 'panels__form';
     contactForm.noValidate = true;
     contactForm.method = 'post';
+    contactForm.enctype = 'multipart/form-data';
     contactForm.action = details.formEndpoint || '';
 
     const formIdSuffix = Math.random().toString(36).slice(2, 7);
     const nameFieldId = `contact-name-${formIdSuffix}`;
     const emailFieldId = `contact-email-${formIdSuffix}`;
     const messageFieldId = `contact-message-${formIdSuffix}`;
+    const attachmentFieldId = `contact-attachment-${formIdSuffix}`;
     const statusFieldId = `contact-status-${formIdSuffix}`;
 
     const fieldsWrapper = document.createElement('div');
     fieldsWrapper.className = 'panels__form-fields';
 
-    const createInputField = ({ id, name, label, type, placeholder, required }) => {
+    const createInputField = ({ id, name, label, type, placeholder, required, attributes = {} }) => {
       const field = document.createElement('div');
       field.className = 'panels__form-field';
 
@@ -650,6 +718,19 @@
       if (type === 'textarea') {
         input.rows = 5;
       }
+
+      Object.entries(attributes).forEach(([attributeName, attributeValue]) => {
+        if (attributeValue === false || attributeValue == null) {
+          return;
+        }
+
+        if (attributeValue === true) {
+          input.setAttribute(attributeName, '');
+          return;
+        }
+
+        input.setAttribute(attributeName, attributeValue);
+      });
 
       field.appendChild(fieldLabel);
       field.appendChild(input);
@@ -682,7 +763,29 @@
     });
     messageField.field.classList.add('panels__form-field--wide');
 
-    fieldsWrapper.append(nameField.field, emailField.field, messageField.field);
+    const attachmentsField = createInputField({
+      id: attachmentFieldId,
+      name: 'attachments[]',
+      label: 'Attachments (optional)',
+      type: 'file',
+      placeholder: '',
+      required: false,
+      attributes: { multiple: true, 'aria-describedby': `${attachmentFieldId}-help` }
+    });
+    attachmentsField.field.classList.add('panels__form-field--wide');
+
+    const attachmentHelp = document.createElement('p');
+    attachmentHelp.className = 'panels__form-help';
+    attachmentHelp.id = `${attachmentFieldId}-help`;
+    attachmentHelp.textContent = 'You can add up to 5 files (max 10 MB each).';
+    attachmentsField.field.appendChild(attachmentHelp);
+
+    fieldsWrapper.append(
+      nameField.field,
+      emailField.field,
+      messageField.field,
+      attachmentsField.field
+    );
 
     const actionsWrapper = document.createElement('div');
     actionsWrapper.className = 'panels__form-actions';
@@ -705,23 +808,60 @@
       name: nameField.input.value.trim(),
       email: emailField.input.value.trim(),
       message: messageField.input.value.trim(),
-      recipient: details.formRecipient || details.emailAddress || ''
+      recipient: details.formRecipient || details.emailAddress || '',
+      attachments: Array.from(attachmentsField.input.files || [])
     });
 
     const validatePayload = (payload) => {
       if (!payload.name || !payload.email || !payload.message) {
-        return false;
+        return { valid: false, message: 'Please provide a valid name, email address, and message.' };
       }
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      return emailPattern.test(payload.email);
+      if (!emailPattern.test(payload.email)) {
+        return { valid: false, message: 'Please provide a valid name, email address, and message.' };
+      }
+
+      if (payload.attachments?.length) {
+        const MAX_FILES = 5;
+        const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
+        const MAX_TOTAL_SIZE_BYTES = 25 * 1024 * 1024;
+
+        if (payload.attachments.length > MAX_FILES) {
+          return {
+            valid: false,
+            message: `Please upload no more than ${MAX_FILES} files.`
+          };
+        }
+
+        let totalSize = 0;
+        for (const file of payload.attachments) {
+          totalSize += file.size;
+          if (file.size > MAX_FILE_SIZE_BYTES) {
+            return {
+              valid: false,
+              message: `Each file must be 10 MB or smaller. Remove "${file.name}" and try again.`
+            };
+          }
+        }
+
+        if (totalSize > MAX_TOTAL_SIZE_BYTES) {
+          return {
+            valid: false,
+            message: 'The combined size of your attachments must be 25 MB or less.'
+          };
+        }
+      }
+
+      return { valid: true };
     };
 
     contactForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       const payload = getPayload();
 
-      if (!validatePayload(payload)) {
-        setStatusMessage(statusMessage, 'error', 'Please provide a valid name, email address, and message.');
+      const validation = validatePayload(payload);
+      if (!validation.valid) {
+        setStatusMessage(statusMessage, 'error', validation.message);
         return;
       }
 
@@ -755,10 +895,17 @@
         let fallbackUsed = false;
         let lastError = null;
 
+        const attachments = payload.attachments || [];
+        const hasAttachments = attachments.length > 0;
+
         const submissionAttempts = [
-          async () => sendUrlEncodedPayload(endpoint, requestPayload),
-          async () => sendJsonPayload(endpoint, requestPayload),
-          async () => sendFormDataPayload(endpoint, requestPayload)
+          ...(hasAttachments
+            ? []
+            : [
+                async () => sendUrlEncodedPayload(endpoint, requestPayload),
+                async () => sendJsonPayload(endpoint, requestPayload)
+              ]),
+          async () => sendFormDataPayload(endpoint, requestPayload, attachments)
         ];
 
         for (const attempt of submissionAttempts) {
@@ -774,10 +921,15 @@
         if (!result) {
           console.warn('FormSubmit direct submission failed, falling back to iframe transport.', lastError);
           const fallbackEndpoint = normaliseFallbackEndpoint(endpoint);
-          const fallbackResult = await submitViaVanillaTransport(fallbackEndpoint, requestPayload, {
-            subject: details.subject,
-            nextUrl: window.location.href
-          });
+          const fallbackResult = await submitViaVanillaTransport(
+            fallbackEndpoint,
+            requestPayload,
+            {
+              subject: details.subject,
+              nextUrl: window.location.href,
+              attachments
+            }
+          );
           if (!fallbackResult) {
             throw lastError || new Error('Unable to deliver the form payload.');
           }

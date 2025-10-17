@@ -377,6 +377,12 @@ input:focus-visible {
   color: var(--color-text-secondary);
 }
 
+.panels__form-help {
+  font-size: var(--font-size-200);
+  color: var(--color-text-secondary);
+  opacity: 0.85;
+}
+
 .panels__form-input,
 .panels__form-textarea {
   border-radius: var(--radius-sm);
