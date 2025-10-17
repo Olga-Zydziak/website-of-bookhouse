@@ -627,6 +627,7 @@
 
   const handleShadeDirectionSelection = (direction) => {
     const nextDirection = direction && direction.trim() ? direction.trim() : DEFAULT_SHADE_DIRECTION;
+    setActiveShadeDirectionButton(nextDirection);
     updateThemeToken('--page-shade-direction', nextDirection, {
       message: 'Background shading origin updated. Refresh the home page to preview changes.'
     });

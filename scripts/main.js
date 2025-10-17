@@ -453,10 +453,11 @@
   const sendJsonPayload = async (endpoint, payload) => {
     const response = await fetch(endpoint, {
       method: 'POST',
+      mode: 'cors',
+      referrerPolicy: 'no-referrer',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
+        Accept: 'application/json'
       },
       body: JSON.stringify(payload)
     });
@@ -474,9 +475,10 @@
 
     const response = await fetch(endpoint, {
       method: 'POST',
+      mode: 'cors',
+      referrerPolicy: 'no-referrer',
       headers: {
-        Accept: 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
+        Accept: 'application/json'
       },
       body: formData
     });
