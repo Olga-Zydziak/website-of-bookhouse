@@ -899,15 +899,17 @@
         const attachments = payload.attachments || [];
         const hasAttachments = attachments.length > 0;
 
-        const submissionAttempts = [
-          ...(hasAttachments
-            ? []
-            : [
-                async () => sendUrlEncodedPayload(endpoint, requestPayload),
-                async () => sendJsonPayload(endpoint, requestPayload)
-              ]),
-          async () => sendFormDataPayload(endpoint, requestPayload, attachments)
-        ];
+        const submissionAttempts = [];
+
+        if (!hasAttachments) {
+          submissionAttempts.push(
+            async () => sendUrlEncodedPayload(endpoint, requestPayload),
+            async () => sendJsonPayload(endpoint, requestPayload),
+            async () => sendFormDataPayload(endpoint, requestPayload, attachments)
+          );
+        } else {
+          lastError = new Error('Attachments require a direct form submission.');
+        }
 
         for (const attempt of submissionAttempts) {
           try {
