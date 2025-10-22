@@ -1,5 +1,6 @@
 window.PUBLISHING_TAB_CONTENT = {
   publishing: {
+    tabLabel: 'Dom Wydawniczy',
     title: 'Dom Wydawniczy',
     body: [
       'Nasze wydawnictwo od ponad dwóch dekad wspiera autorów, dostarczając czytelnikom wyjątkowe historie z całego świata.',
@@ -15,6 +16,7 @@ window.PUBLISHING_TAB_CONTENT = {
     ]
   },
   authors: {
+    tabLabel: 'Dla Autorów',
     title: 'Dla Autorów',
     body: [
       'Zapewniamy kompleksową opiekę redakcyjną i marketingową – od pierwszej wersji manuskryptu po premierę rynkową.',
@@ -29,6 +31,7 @@ window.PUBLISHING_TAB_CONTENT = {
     ]
   },
   selfPublishing: {
+    tabLabel: 'Self-publishing',
     title: 'Self-publishing',
     body: [
       'Oferujemy modułowe pakiety druku na żądanie, dystrybucji i promocji dla niezależnych twórców.',
@@ -43,6 +46,7 @@ window.PUBLISHING_TAB_CONTENT = {
     ]
   },
   bookstore: {
+    tabLabel: 'Księgarnia',
     title: 'Księgarnia',
     body: [
       'Kuratorujemy kolekcje tematyczne, które zmieniają się wraz z sezonem i trendami czytelniczymi.',
@@ -57,6 +61,7 @@ window.PUBLISHING_TAB_CONTENT = {
     ]
   },
   contact: {
+    tabLabel: 'Kontakt',
     title: 'Kontakt',
     body: [
       'Skorzystaj z formularza lub danych kontaktowych, aby skonsultować współpracę wydawniczą, prawa autorskie czy propozycje partnerstw.'

@@ -15,7 +15,8 @@
     '--page-shade-direction',
     '--page-shade-strength',
     '--page-shade-soft',
-    '--page-shade-panel'
+    '--page-shade-panel',
+    '--tabs-size-scale'
   ];
 
   const toFullHex = (value) => {
@@ -619,9 +620,9 @@
     }
 
     return {
-      phoneLabel: details.phoneLabel || 'Phone',
+      phoneLabel: details.phoneLabel || 'Telefon',
       phoneNumber,
-      emailLabel: details.emailLabel || 'Email',
+      emailLabel: details.emailLabel || 'E-mail',
       emailAddress,
       formRecipient: emailAddress,
       formEndpoint: buildEndpoint({ ...details, emailAddress }),
@@ -1018,8 +1019,8 @@
 
   tabButtons.forEach((button) => {
     const content = TAB_CONTENT[button.dataset.tab];
-    if (content?.title) {
-      button.textContent = content.title;
+    if (content?.tabLabel || content?.title) {
+      button.textContent = content.tabLabel || content.title;
     }
 
     button.addEventListener('click', () => {
