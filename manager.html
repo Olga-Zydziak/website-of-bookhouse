@@ -46,6 +46,11 @@
               <label class="content-manager__label" for="manager-title">Tab title</label>
               <input class="content-manager__input" id="manager-title" name="manager-title" type="text" required />
             </div>
+            <div class="content-manager__field">
+              <label class="content-manager__label" for="manager-tab-label">Tab button label</label>
+              <input class="content-manager__input" id="manager-tab-label" name="manager-tab-label" type="text" />
+              <p class="content-manager__hint">Appears in navigation tabs (Area 3). Leave blank to reuse the tab title.</p>
+            </div>
             <div class="content-manager__field content-manager__field--wide">
               <label class="content-manager__label" for="manager-body">Tab content</label>
               <textarea class="content-manager__textarea" id="manager-body" name="manager-body" rows="10" required></textarea>
@@ -54,8 +59,16 @@
             <fieldset class="content-manager__fieldset" data-manager-contact hidden>
               <legend class="content-manager__legend">Contact details</legend>
               <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-phone-label">Phone label</label>
+                <input class="content-manager__input" id="manager-phone-label" name="manager-phone-label" type="text" placeholder="Telefon" />
+              </div>
+              <div class="content-manager__field">
                 <label class="content-manager__label" for="manager-phone">Phone number</label>
                 <input class="content-manager__input" id="manager-phone" name="manager-phone" type="tel" placeholder="+48 123 456 789" />
+              </div>
+              <div class="content-manager__field">
+                <label class="content-manager__label" for="manager-email-label">Email label</label>
+                <input class="content-manager__input" id="manager-email-label" name="manager-email-label" type="text" placeholder="E-mail" />
               </div>
               <div class="content-manager__field">
                 <label class="content-manager__label" for="manager-email">Contact email</label>
@@ -183,6 +196,14 @@
                   <output class="content-manager__range-value" id="manager-shadow-depth-value" for="manager-shadow-depth">45%</output>
                 </div>
                 <p class="content-manager__hint" id="manager-shadow-depth-help">Set the perceived depth for cards and panels.</p>
+              </div>
+              <div class="content-manager__field content-manager__field--range">
+                <label class="content-manager__label" for="manager-tabs-scale">Tab button size</label>
+                <div class="content-manager__range">
+                  <input class="content-manager__range-input" id="manager-tabs-scale" type="range" min="85" max="125" step="1" value="100" />
+                  <output class="content-manager__range-value" id="manager-tabs-scale-value" for="manager-tabs-scale">100%</output>
+                </div>
+                <p class="content-manager__hint">Scale navigation tabs (Area 3) so they visually match the main panel.</p>
               </div>
             </section>
           </aside>

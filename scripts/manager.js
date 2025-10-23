@@ -14,7 +14,8 @@
     '--page-shade-direction',
     '--page-shade-strength',
     '--page-shade-soft',
-    '--page-shade-panel'
+    '--page-shade-panel',
+    '--tabs-size-scale'
   ];
 
   const DEFAULT_ACCENT_SHADE = 12; // percentage
@@ -280,11 +281,14 @@
 
   const tabSelect = document.getElementById('manager-tab');
   const titleInput = document.getElementById('manager-title');
+  const tabLabelInput = document.getElementById('manager-tab-label');
   const bodyInput = document.getElementById('manager-body');
   const statusOutput = document.getElementById('manager-status');
   const resetButton = document.getElementById('manager-reset');
   const contactFieldset = document.querySelector('[data-manager-contact]');
+  const phoneLabelInput = document.getElementById('manager-phone-label');
   const phoneInput = document.getElementById('manager-phone');
+  const emailLabelInput = document.getElementById('manager-email-label');
   const emailInput = document.getElementById('manager-email');
   const subjectInput = document.getElementById('manager-subject');
   const submittingInput = document.getElementById('manager-submitting');
@@ -303,6 +307,8 @@
   const backgroundShadeInput = document.getElementById('manager-background-shade');
   const backgroundShadeValue = document.getElementById('manager-background-shade-value');
   const shadeDirectionButtons = Array.from(document.querySelectorAll('[data-shade-direction]'));
+  const tabsScaleInput = document.getElementById('manager-tabs-scale');
+  const tabsScaleValue = document.getElementById('manager-tabs-scale-value');
   document.querySelectorAll('[data-theme-picker]').forEach((input) => {
     if (input instanceof HTMLInputElement && input.dataset.themePicker) {
       themePickers.set(input.dataset.themePicker, input);
@@ -324,9 +330,9 @@
     const subject = details.subject || 'New inquiry from the Publishing Portfolio contact form';
 
     return {
-      phoneLabel: details.phoneLabel || 'Phone',
+      phoneLabel: details.phoneLabel || 'Telefon',
       phoneNumber,
-      emailLabel: details.emailLabel || 'Email',
+      emailLabel: details.emailLabel || 'E-mail',
       emailAddress: emailValue,
       formRecipient: emailValue,
       formEndpoint: buildFormEndpoint(emailValue),
@@ -500,6 +506,24 @@
     }
   };
 
+  const syncTabsScaleControl = () => {
+    if (!tabsScaleInput) {
+      return;
+    }
+
+    const stored =
+      themeOverrides['--tabs-size-scale'] ||
+      getComputedTokenValue('--tabs-size-scale') ||
+      '1';
+    const numeric = Number(stored);
+    const scale = Number.isNaN(numeric) ? 1 : clamp(numeric, 0.85, 1.25);
+    const percent = Math.round(scale * 100);
+    tabsScaleInput.value = String(percent);
+    if (tabsScaleValue) {
+      tabsScaleValue.textContent = `${percent}%`;
+    }
+  };
+
   const syncThemeFields = () => {
     editableThemeTokens.forEach((token) => {
       syncThemeField(token);
@@ -508,6 +532,7 @@
     syncBackgroundShadeControl();
     syncShadeDirectionControl();
     syncShadowControl();
+    syncTabsScaleControl();
   };
 
   const updateThemeToken = (token, value, options = {}) => {
@@ -569,6 +594,9 @@
     if (token === '--shadow-elevated') {
       syncShadowControl();
     }
+    if (token === '--tabs-size-scale') {
+      syncTabsScaleControl();
+    }
     renderOutput();
     if (statusOutput && !options.silent) {
       const successMessage = options.message || 'Theme colors updated. Refresh the home page to preview changes.';
@@ -627,6 +655,7 @@
 
   const handleShadeDirectionSelection = (direction) => {
     const nextDirection = direction && direction.trim() ? direction.trim() : DEFAULT_SHADE_DIRECTION;
+    setActiveShadeDirectionButton(nextDirection);
     updateThemeToken('--page-shade-direction', nextDirection, {
       message: 'Background shading origin updated. Refresh the home page to preview changes.'
     });
@@ -651,6 +680,19 @@
     });
   });
 
+  tabsScaleInput?.addEventListener('input', () => {
+    const rawValue = Number(tabsScaleInput.value);
+    const percent = clamp(Number.isNaN(rawValue) ? 100 : rawValue, 85, 125);
+    tabsScaleInput.value = String(percent);
+    if (tabsScaleValue) {
+      tabsScaleValue.textContent = `${percent}%`;
+    }
+    const scale = Math.round(percent) / 100;
+    updateThemeToken('--tabs-size-scale', Number(scale.toFixed(2)), {
+      message: 'Navigation tabs resized. Refresh the home page to preview changes.'
+    });
+  });
+
   themeResetButton?.addEventListener('click', () => {
     themeOverrides = { ...DEFAULT_THEME_OVERRIDES };
     const cleared = clearThemeOverrides();
@@ -668,6 +710,9 @@
     const content = workingCopy[tabKey];
     if (!content) {
       titleInput.value = '';
+      if (tabLabelInput) {
+        tabLabelInput.value = '';
+      }
       bodyInput.value = '';
       if (contactFieldset) {
         contactFieldset.hidden = true;
@@ -676,6 +721,9 @@
     }
 
     titleInput.value = content.title || '';
+    if (tabLabelInput) {
+      tabLabelInput.value = content.tabLabel || content.title || '';
+    }
     bodyInput.value = formatBodyForInput(content.body || []);
 
     if (contactFieldset) {
@@ -685,7 +733,13 @@
       if (isContact) {
         const details = normaliseContactDetails(content.contactDetails || {});
         workingCopy[tabKey].contactDetails = JSON.parse(JSON.stringify(details));
+        if (phoneLabelInput) {
+          phoneLabelInput.value = details.phoneLabel || '';
+        }
         phoneInput.value = details.phoneNumber || '';
+        if (emailLabelInput) {
+          emailLabelInput.value = details.emailLabel || '';
+        }
         emailInput.value = details.emailAddress || '';
         if (subjectInput) {
           subjectInput.value = details.subject || '';
@@ -701,6 +755,7 @@
 
   const updateWorkingCopy = (tabKey) => {
     const titleValue = titleInput.value.trim();
+    const tabLabelValue = tabLabelInput?.value.trim() || '';
     const bodyValue = bodyInput.value.trim();
 
     if (!titleValue || !bodyValue) {
@@ -712,11 +767,14 @@
     const nextContent = {
       ...existingContent,
       title: titleValue,
+      tabLabel: tabLabelValue || titleValue,
       body: parseInputToBody(bodyValue)
     };
 
     if (tabKey === 'contact') {
+      const phoneLabelValue = phoneLabelInput?.value.trim() || '';
       const phoneValue = phoneInput.value.trim();
+      const emailLabelValue = emailLabelInput?.value.trim() || '';
       const emailValue = emailInput.value.trim();
       const subjectValue = subjectInput?.value.trim() || '';
 
@@ -730,7 +788,9 @@
       const errorMessage = errorInput.value.trim() || 'Sorry, something went wrong. Please try again later.';
 
       nextContent.contactDetails = normaliseContactDetails({
+        phoneLabel: phoneLabelValue || undefined,
         phoneNumber: phoneValue,
+        emailLabel: emailLabelValue || undefined,
         emailAddress: emailValue,
         submittingMessage,
         successMessage,
