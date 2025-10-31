@@ -48,6 +48,43 @@
             </div>
             <div class="content-manager__field content-manager__field--wide">
               <label class="content-manager__label" for="manager-body">Tab content</label>
+              <div class="content-manager__toolbar" role="toolbar" aria-label="Text formatting">
+                <div class="content-manager__toolbar-group">
+                  <button class="content-manager__toolbar-button" type="button" data-format="h1" title="Heading 1" aria-label="Heading 1">
+                    H1
+                  </button>
+                  <button class="content-manager__toolbar-button" type="button" data-format="h2" title="Heading 2" aria-label="Heading 2">
+                    H2
+                  </button>
+                  <button class="content-manager__toolbar-button" type="button" data-format="h3" title="Heading 3" aria-label="Heading 3">
+                    H3
+                  </button>
+                </div>
+                <div class="content-manager__toolbar-group">
+                  <button class="content-manager__toolbar-button" type="button" data-format="bold" title="Bold" aria-label="Bold">
+                    <strong>B</strong>
+                  </button>
+                  <button class="content-manager__toolbar-button" type="button" data-format="italic" title="Italic" aria-label="Italic">
+                    <em>I</em>
+                  </button>
+                </div>
+                <div class="content-manager__toolbar-group">
+                  <button class="content-manager__toolbar-button" type="button" data-format="ul" title="Bullet list" aria-label="Bullet list">
+                    • List
+                  </button>
+                  <button class="content-manager__toolbar-button" type="button" data-format="ol" title="Numbered list" aria-label="Numbered list">
+                    1. List
+                  </button>
+                </div>
+                <div class="content-manager__toolbar-group">
+                  <label class="content-manager__toolbar-label" for="paragraph-size">Size:</label>
+                  <select class="content-manager__toolbar-select" id="paragraph-size" aria-label="Paragraph size">
+                    <option value="">Normal</option>
+                    <option value="small">Small</option>
+                    <option value="large">Large</option>
+                  </select>
+                </div>
+              </div>
               <textarea class="content-manager__textarea" id="manager-body" name="manager-body" rows="10" required></textarea>
               <p class="content-manager__hint">Example bullet list:<br />- First highlight<br />- Second highlight</p>
             </div>
