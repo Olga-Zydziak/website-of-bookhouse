@@ -830,5 +830,139 @@
     syncForm(tabSelect.value);
   }
 
+  // Text formatting toolbar functionality
+  const toolbarButtons = document.querySelectorAll('[data-format]');
+  const paragraphSizeSelect = document.getElementById('paragraph-size');
+
+  const insertFormatting = (format) => {
+    const textarea = bodyInput;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const beforeText = textarea.value.substring(0, start);
+    const afterText = textarea.value.substring(end);
+
+    let newText = '';
+    let newCursorPos = start;
+
+    switch (format) {
+      case 'h1':
+        newText = selectedText ? `# ${selectedText}` : '# Heading 1';
+        newCursorPos = start + (selectedText ? selectedText.length + 2 : 11);
+        break;
+      case 'h2':
+        newText = selectedText ? `## ${selectedText}` : '## Heading 2';
+        newCursorPos = start + (selectedText ? selectedText.length + 3 : 12);
+        break;
+      case 'h3':
+        newText = selectedText ? `### ${selectedText}` : '### Heading 3';
+        newCursorPos = start + (selectedText ? selectedText.length + 4 : 13);
+        break;
+      case 'bold':
+        newText = selectedText ? `**${selectedText}**` : '**bold text**';
+        newCursorPos = start + (selectedText ? selectedText.length + 4 : 11);
+        break;
+      case 'italic':
+        newText = selectedText ? `*${selectedText}*` : '*italic text*';
+        newCursorPos = start + (selectedText ? selectedText.length + 2 : 12);
+        break;
+      case 'ul':
+        if (selectedText) {
+          const lines = selectedText.split('\n');
+          newText = lines.map(line => line.trim() ? `- ${line.trim()}` : line).join('\n');
+          newCursorPos = start + newText.length;
+        } else {
+          newText = '- List item 1\n- List item 2\n- List item 3';
+          newCursorPos = start + newText.length;
+        }
+        break;
+      case 'ol':
+        if (selectedText) {
+          const lines = selectedText.split('\n').filter(line => line.trim());
+          newText = lines.map((line, index) => `${index + 1}. ${line.trim()}`).join('\n');
+          newCursorPos = start + newText.length;
+        } else {
+          newText = '1. First item\n2. Second item\n3. Third item';
+          newCursorPos = start + newText.length;
+        }
+        break;
+      default:
+        return;
+    }
+
+    textarea.value = beforeText + newText + afterText;
+    textarea.focus();
+    textarea.setSelectionRange(newCursorPos, newCursorPos);
+
+    // Trigger input event to update any listeners
+    const inputEvent = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(inputEvent);
+  };
+
+  const applyParagraphSize = (size) => {
+    const textarea = bodyInput;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+
+    if (!selectedText) {
+      if (statusOutput) {
+        statusOutput.textContent = 'Please select text to apply paragraph size.';
+      }
+      return;
+    }
+
+    const beforeText = textarea.value.substring(0, start);
+    const afterText = textarea.value.substring(end);
+
+    let newText = '';
+    if (size === 'small') {
+      newText = `[small]${selectedText}[/small]`;
+    } else if (size === 'large') {
+      newText = `[large]${selectedText}[/large]`;
+    } else {
+      newText = selectedText;
+    }
+
+    textarea.value = beforeText + newText + afterText;
+    textarea.focus();
+    const newCursorPos = start + newText.length;
+    textarea.setSelectionRange(newCursorPos, newCursorPos);
+
+    // Reset the select to default
+    if (paragraphSizeSelect) {
+      paragraphSizeSelect.value = '';
+    }
+
+    // Trigger input event
+    const inputEvent = new Event('input', { bubbles: true });
+    textarea.dispatchEvent(inputEvent);
+
+    if (statusOutput) {
+      statusOutput.textContent = size ? `Applied ${size} size to selected text.` : 'Size formatting removed.';
+    }
+  };
+
+  // Add event listeners to toolbar buttons
+  toolbarButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const format = button.dataset.format;
+      if (format) {
+        insertFormatting(format);
+      }
+    });
+  });
+
+  // Add event listener to paragraph size select
+  if (paragraphSizeSelect) {
+    paragraphSizeSelect.addEventListener('change', () => {
+      applyParagraphSize(paragraphSizeSelect.value);
+    });
+  }
+
   renderOutput();
 })();
